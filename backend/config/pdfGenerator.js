@@ -1,9 +1,11 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 
 export const generateCVPdf = async (cv) => {
+  // Launch Puppeteer with system Chromium
   const browser = await puppeteer.launch({
+    headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    executablePath: process.env.CHROME_BIN || undefined, // Uses Render-installed Chrome
+    executablePath: '/usr/bin/chromium-browser' // Render system Chromium
   });
 
   const page = await browser.newPage();
@@ -50,31 +52,27 @@ export const generateCVPdf = async (cv) => {
           <h3>${exp.position} - ${exp.company}</h3>
           <p>${exp.startDate ? new Date(exp.startDate).toLocaleDateString() : ''} - ${exp.endDate ? new Date(exp.endDate).toLocaleDateString() : 'Present'}</p>
           <p>${exp.description || ''}</p>
-        </div>
-      `).join('')}</div>` : ''}
+        </div>`).join('')}</div>` : ''}
       ${cv.education?.length ? `<div class="section"><h2>Education</h2>${cv.education.map(edu => `
         <div class="item">
           <h3>${edu.degree} - ${edu.institution}</h3>
           <p>${edu.startDate ? new Date(edu.startDate).toLocaleDateString() : ''} - ${edu.endDate ? new Date(edu.endDate).toLocaleDateString() : 'Present'}</p>
           <p>${edu.field || ''}</p>
           <p>${edu.notes || ''}</p>
-        </div>
-      `).join('')}</div>` : ''}
+        </div>`).join('')}</div>` : ''}
       ${cv.projects?.length ? `<div class="section"><h2>Projects</h2>${cv.projects.map(proj => `
         <div class="item">
           <h3>${proj.title}</h3>
           <p>${proj.description || ''}</p>
           ${proj.link ? `<p>Link: <a href="${proj.link}" target="_blank">${proj.link}</a></p>` : ''}
-        </div>
-      `).join('')}</div>` : ''}
+        </div>`).join('')}</div>` : ''}
       ${cv.certifications?.length ? `<div class="section"><h2>Certifications</h2>${cv.certifications.map(cert => `
         <div class="item">
           <h3>${cert.name} - ${cert.issuer}</h3>
           <p>${cert.date ? new Date(cert.date).toLocaleDateString() : ''}</p>
           <p>${cert.credential || ''}</p>
           ${cert.url ? `<p>URL: <a href="${cert.url}" target="_blank">${cert.url}</a></p>` : ''}
-        </div>
-      `).join('')}</div>` : ''}
+        </div>`).join('')}</div>` : ''}
       ${cv.skills?.length ? `<div class="section"><h2>Skills</h2><p>${cv.skills.map(s => `${s.name} (${s.level}%)`).join(', ')}</p></div>` : ''}
       ${cv.languages?.length ? `<div class="section"><h2>Languages</h2><p>${cv.languages.map(l => `${l.name} (${l.proficiency})`).join(', ')}</p></div>` : ''}
       ${cv.interests?.length ? `<div class="section"><h2>Interests</h2><p>${cv.interests.join(', ')}</p></div>` : ''}
@@ -82,8 +80,7 @@ export const generateCVPdf = async (cv) => {
         <div class="item">
           <h3>${cs.title}</h3>
           <p>${cs.content}</p>
-        </div>
-      `).join('')}</div>` : ''}
+        </div>`).join('')}</div>` : ''}
     </div>
   </body>
   </html>
