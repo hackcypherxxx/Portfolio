@@ -3,7 +3,7 @@ import puppeteer from 'puppeteer';
 export const generateCVPdf = async (cv) => {
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    executablePath: puppeteer.executablePath(), // ✅ Use Puppeteer’s bundled Chromium
+    executablePath: process.env.CHROME_BIN || undefined, // Uses Render-installed Chrome
   });
 
   const page = await browser.newPage();
@@ -45,7 +45,6 @@ export const generateCVPdf = async (cv) => {
       </div>
 
       ${cv.personal?.summary ? `<div class="section"><h2>Summary</h2><p>${cv.personal.summary}</p></div>` : ''}
-
       ${cv.experiences?.length ? `<div class="section"><h2>Experience</h2>${cv.experiences.map(exp => `
         <div class="item">
           <h3>${exp.position} - ${exp.company}</h3>
@@ -53,7 +52,6 @@ export const generateCVPdf = async (cv) => {
           <p>${exp.description || ''}</p>
         </div>
       `).join('')}</div>` : ''}
-
       ${cv.education?.length ? `<div class="section"><h2>Education</h2>${cv.education.map(edu => `
         <div class="item">
           <h3>${edu.degree} - ${edu.institution}</h3>
@@ -62,7 +60,6 @@ export const generateCVPdf = async (cv) => {
           <p>${edu.notes || ''}</p>
         </div>
       `).join('')}</div>` : ''}
-
       ${cv.projects?.length ? `<div class="section"><h2>Projects</h2>${cv.projects.map(proj => `
         <div class="item">
           <h3>${proj.title}</h3>
@@ -70,7 +67,6 @@ export const generateCVPdf = async (cv) => {
           ${proj.link ? `<p>Link: <a href="${proj.link}" target="_blank">${proj.link}</a></p>` : ''}
         </div>
       `).join('')}</div>` : ''}
-
       ${cv.certifications?.length ? `<div class="section"><h2>Certifications</h2>${cv.certifications.map(cert => `
         <div class="item">
           <h3>${cert.name} - ${cert.issuer}</h3>
@@ -79,30 +75,26 @@ export const generateCVPdf = async (cv) => {
           ${cert.url ? `<p>URL: <a href="${cert.url}" target="_blank">${cert.url}</a></p>` : ''}
         </div>
       `).join('')}</div>` : ''}
-
       ${cv.skills?.length ? `<div class="section"><h2>Skills</h2><p>${cv.skills.map(s => `${s.name} (${s.level}%)`).join(', ')}</p></div>` : ''}
-
       ${cv.languages?.length ? `<div class="section"><h2>Languages</h2><p>${cv.languages.map(l => `${l.name} (${l.proficiency})`).join(', ')}</p></div>` : ''}
-
       ${cv.interests?.length ? `<div class="section"><h2>Interests</h2><p>${cv.interests.join(', ')}</p></div>` : ''}
-
       ${cv.customSections?.length ? `<div class="section"><h2>Custom Sections</h2>${cv.customSections.map(cs => `
         <div class="item">
           <h3>${cs.title}</h3>
           <p>${cs.content}</p>
         </div>
       `).join('')}</div>` : ''}
-
     </div>
   </body>
   </html>
   `;
 
   await page.setContent(html, { waitUntil: 'networkidle0' });
-  const pdfBuffer = await page.pdf({
-    format: 'A4',
-    printBackground: true,
-    margin: { top: '20px', bottom: '20px', left: '20px', right: '20px' }
+
+  const pdfBuffer = await page.pdf({ 
+    format: 'A4', 
+    printBackground: true, 
+    margin: { top:'20px', bottom:'20px', left:'20px', right:'20px' } 
   });
 
   await browser.close();
