@@ -65,7 +65,7 @@ const Header = () => {
             href="/"
             className="text-2xl font-display uppercase tracking-widest text-white hover:text-[#f9861a] transition-colors"
           >
-            <strong>E</strong>THOS
+            <strong>ChE</strong>_WEB
           </a>
         </div>
 
