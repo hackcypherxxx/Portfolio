@@ -13,7 +13,7 @@ import {
 const router = express.Router();
 
 router.route('/')
-  .get(protect, getSkills)
+  .get(getSkills)
   .post(protect, createSkill);
 
 router.route('/:id')
