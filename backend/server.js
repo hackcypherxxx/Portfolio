@@ -21,7 +21,7 @@ const app = express();
 // Security & CORS
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: https://portfolio-1-frontend-4tz4.onrender.com,
   credentials: true
 }));
 
