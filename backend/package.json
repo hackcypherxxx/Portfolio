@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon server.js",
-    "start": "node server.js",
-    "install": "npm install"
+  "start": "node server.js",
+  "build": "echo 'Nothing to build for Node.js backend'"
   },
   "keywords": [],
   "author": "",
